@@ -33,11 +33,14 @@ typedef struct {
 	const void *cmd;
 } Sp;
 const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
-const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=16", "-g", "50x20", "-e", "bc", "-lq", NULL };
+const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=16", 
+                        "-g", "50x20", "-e", "bc", "-lq", NULL };
+const char *spcmd3[] = {TERMINAL, "-n", "splf", "-g", "120x34", "-e", "lf", NULL};
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
 	{"spcalc",      spcmd2},
+	{"splf",        spcmd3},
 };
 
 /* tagging */
@@ -48,9 +51,10 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	*/
-	/* class    instance      title       	 tags mask    isfloating   isterminal  noswallow  monitor */
-	{ NULL,      "spterm",    NULL,       	    SPTAG(0),     1,           1,         0,        -1 },
-	{ NULL,      "spcalc",    NULL,       	    SPTAG(1),     1,           1,         0,        -1 },
+	/* class    instance    title   tags mask  isfloating  isterminal  noswallow  monitor */
+	{ NULL,      "spterm",  NULL,   SPTAG(0),     1,           1,         0,        -1 },
+	{ NULL,      "spcalc",  NULL,   SPTAG(1),     1,           1,         0,        -1 },
+	{ NULL,      "splf",    NULL,   SPTAG(2),     1,           1,         0,        -1 },
 };
 
 /* layout(s) */
@@ -141,7 +145,8 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,		XK_q,		spawn,		SHCMD("sysact") },
 	{ MODKEY,			XK_w,		spawn,		SHCMD("$BROWSER") },
 	{ MODKEY|ShiftMask,		XK_w,		spawn,		SHCMD(TERMINAL " -e sudo nmtui") },
-	{ MODKEY,			XK_e,		spawn,		SHCMD(TERMINAL " -e lf") },
+/*	{ MODKEY,			XK_e,		spawn,		SHCMD(TERMINAL " -e lf") }, */
+	{ MODKEY,	  	XK_e,		togglescratch,	{.ui = 2} },
 	{ MODKEY,			XK_r,		spawn,		SHCMD(TERMINAL " -e htop") },
 	{ MODKEY,			XK_t,		setlayout,	{.v = &layouts[0]} }, /* tile */
 	{ MODKEY,			XK_u,		setlayout,	{.v = &layouts[1]} }, /* monocle */
