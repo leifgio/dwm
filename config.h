@@ -12,16 +12,16 @@ static unsigned int gappiv    = 4;       /* vert inner gap between windows */
 static unsigned int gappoh    = 4;       /* horiz outer gap between windows and screen edge */
 static unsigned int gappov    = 4;       /* vert outer gap between windows and screen edge */
 static int swallowfloating    = 1;        /* 1 means swallow floating windows by default */
-static int smartgaps          = 1;        /* 1 means no outer gap when there is only one window */
-static int showbar            = 0;        /* 0 means no bar */
+static int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
+static int showbar            = 1;        /* 0 means no bar */
 static int topbar             = 1;        /* 0 means bottom bar */
-static char *fonts[]          = { "monospace:size=7:antialias=true:autohint:true", "JoyPixel:pixelsize=10:antialias=true:autohint=true"  };
+static char *fonts[]          = { "JoyPixel:size=14:antialias=true:autohint:true", "JoyPixel:pixelsize=10:antialias=true:autohint=true"  };
 static char normbgcolor[]           = "#1d2021";
-static char normbordercolor[]       = "#1d2021";
+static char normbordercolor[]       = "#ebdbb2";
 static char normfgcolor[]           = "#ebdbb2";
 static char selfgcolor[]            = "#1d2021";
 static char selbordercolor[]        = "#d79921";
-static char selbgcolor[]            = "#d79921";/*"#689d6a";*/
+static char selbgcolor[]            = "#ebdbb2";/*"#689d6a";*/
 static char *colors[][3] = {
        /*               fg           bg           border   */
        [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
@@ -35,7 +35,7 @@ typedef struct {
 const char *spcmd1[] = {TERMINAL, "-n", "spterm", "-g", "120x34", NULL };
 const char *spcmd2[] = {TERMINAL, "-n", "spcalc", "-f", "monospace:size=16", 
                         "-g", "50x20", "-e", "bc", "-lq", NULL };
-const char *spcmd3[] = {TERMINAL, "-n", "splf", "-g", "120x34", "-e", "lf", NULL};
+const char *spcmd3[] = {TERMINAL, "-n", "splf", "-g", "100x20", "-e", "lfub", NULL};
 static Sp scratchpads[] = {
 	/* name          cmd  */
 	{"spterm",      spcmd1},
@@ -51,10 +51,11 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	*/
-	/* class    instance    title   tags mask  isfloating  isterminal  noswallow  monitor */
-	{ NULL,      "spterm",  NULL,   SPTAG(0),     1,           1,         0,        -1 },
-	{ NULL,      "spcalc",  NULL,   SPTAG(1),     1,           1,         0,        -1 },
-	{ NULL,      "splf",    NULL,   SPTAG(2),     1,           1,         0,        -1 },
+	/* class  instance  title       tags mask  isfloating  isterminal  noswallow  monitor */
+	{ NULL,  "spterm",  NULL,       SPTAG(0),     1,           1,         0,        -1 },
+	{ NULL,  "spcalc",  NULL,       SPTAG(1),     1,           1,         0,        -1 },
+	{ NULL,    "splf",  NULL,       SPTAG(2),     0,           1,         0,        -1 },
+	{ NULL,      "st", "pulsemixer",SPTAG(3),     0,           1,         0,        -1 },
 };
 
 /* layout(s) */
@@ -148,8 +149,8 @@ static Key keys[] = {
 /*	{ MODKEY,			XK_e,		spawn,		SHCMD(TERMINAL " -e lf") }, */
 	{ MODKEY,	  	XK_e,		togglescratch,	{.ui = 2} },
 	{ MODKEY,			XK_r,		spawn,		SHCMD(TERMINAL " -e htop") },
-	{ MODKEY,			XK_t,		setlayout,	{.v = &layouts[0]} }, /* tile */
-	{ MODKEY,			XK_u,		setlayout,	{.v = &layouts[1]} }, /* monocle */
+	{ MODKEY,			XK_u,		setlayout,	{.v = &layouts[0]} }, /* tile */
+	{ MODKEY,			XK_i,		setlayout,	{.v = &layouts[1]} }, /* monocle */
 	{ MODKEY,			XK_a,		togglegaps,	{0} },
 	{ MODKEY|ShiftMask,		XK_a,		defaultgaps,	{0} },
 	{ MODKEY,			XK_z,		togglesticky,	{0} },
@@ -167,6 +168,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,		XK_Return,	togglescratch,	{.ui = 0} },
 	{ MODKEY,			XK_b,		togglebar,	{0} },
 	/*{ MODKEY,			XK_n,		spawn,		SHCMD(TERMINAL " -e nvim -c VimwikiIndex") },*/
+	{ MODKEY,			XK_n,		spawn,		{.v = (const char*[]){ TERMINAL, "-e", "ncmpcpp", NULL } } },
 	{ MODKEY|ShiftMask,		XK_n,		spawn,		SHCMD(TERMINAL " -e newsboat; pkill -RTMIN+6 dwmblocks") },
 	{ MODKEY,			XK_m,		spawn,		SHCMD(TERMINAL " -e pulsemixer; kill -44 $(pidof dwmblocks)") },
 	{ MODKEY|ShiftMask,		XK_m,		spawn,		SHCMD("pamixer -t; kill -44 $(pidof dwmblocks)") },
